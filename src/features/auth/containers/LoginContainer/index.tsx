@@ -1,15 +1,24 @@
 import { useAuth } from '../../hooks/useAuth';
 import { LoginButton } from '../../presentational/LoginButton';
+import { UserProfile } from '../../presentational/UserProfile';
 
-export const LoginContainer: React.FC = () => {
-  const { signInWithGoogle, loading, error } = useAuth();
+export const LoginContainer = () => {
+  const { user, signInWithGoogle, signOut, loading } = useAuth();
+
+  if (user) {
+    return (
+      <UserProfile 
+        user={user}
+        onSignOut={signOut}
+        disabled={loading}
+      />
+    );
+  }
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <LoginButton onClick={signInWithGoogle} loading={loading} />
-      {error && (
-        <p className="text-red-500">{error.message}</p>
-      )}
-    </div>
+    <LoginButton 
+      onClick={signInWithGoogle}
+      disabled={loading}
+    />
   );
 };
