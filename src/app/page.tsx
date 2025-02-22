@@ -2,8 +2,14 @@
 
 import { LoginContainer } from '@/features/auth/containers/LoginContainer';
 import { Layout } from '@/components/Layout';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export default function Home() {
+  const { loading } = useAuth();
+  if (loading) {
+    return null;
+  }
+
   return (
     <Layout>
       <div className="flex min-h-screen flex-col items-center justify-center">

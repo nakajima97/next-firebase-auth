@@ -8,10 +8,14 @@ export const LoginContainer = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (user) {
+    if (!loading && user) {
       router.push('/dashboard');
     }
-  }, [user, router]);
+  }, [user, loading, router]);
+
+  if (loading || user) {
+    return null;
+  }
 
   return <LoginButton onClick={signInWithGoogle} disabled={loading} />;
 };
