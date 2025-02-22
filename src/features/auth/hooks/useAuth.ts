@@ -5,8 +5,8 @@ import {
   onAuthStateChanged,
   signInWithPopup,
 } from 'firebase/auth';
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import type { AuthState, User } from '../types';
 
 /**
@@ -56,7 +56,7 @@ export const useAuth = () => {
           loading: false,
           error: error instanceof Error ? error : new Error(error),
         });
-      }
+      },
     );
 
     return () => unsubscribe();

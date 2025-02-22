@@ -1,7 +1,7 @@
 'use client';
 
-import { LoginContainer } from '@/features/auth/containers/LoginContainer';
 import { Layout } from '@/components/Layout';
+import { LoginContainer } from '@/features/auth/containers/LoginContainer';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export default function Home() {

@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { Layout } from '@/components/Layout';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { UserProfile } from '@/features/auth/presentational/UserProfile';
-import { Layout } from '@/components/Layout';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function InfoPage() {
   const { user, loading, signOut } = useAuth();
