@@ -6,6 +6,7 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import type { AuthState, User } from '../types';
 
 /**
@@ -19,33 +20,45 @@ import type { AuthState, User } from '../types';
  * - signOut: サインアウトする関数
  */
 export const useAuth = () => {
+  const router = useRouter();
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     loading: true,
     error: null,
   });
 
-  /**
-   * Firebase の認証状態の変更を監視します。
-   * ユーザーのログイン状態が変更されるたびに実行され、
-   * 状態を更新します。
-   */
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const formattedUser: User = {
-          id: user.uid,
-          email: user.email,
-          name: user.displayName,
-          photoURL: user.photoURL,
-        };
-        setAuthState({ user: formattedUser, loading: false, error: null });
-      } else {
-        setAuthState({ user: null, loading: false, error: null });
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (user) => {
+        if (user) {
+          setAuthState({
+            user: {
+              id: user.uid,
+              email: user.email,
+              name: user.displayName,
+              photoURL: user.photoURL,
+            },
+            loading: false,
+            error: null,
+          });
+        } else {
+          setAuthState({
+            user: null,
+            loading: false,
+            error: null,
+          });
+        }
+      },
+      (error) => {
+        setAuthState({
+          user: null,
+          loading: false,
+          error: error instanceof Error ? error : new Error(error),
+        });
       }
-    });
+    );
 
-    // クリーンアップ関数：コンポーネントのアンマウント時に監視を解除
     return () => unsubscribe();
   }, []);
 
@@ -60,11 +73,12 @@ export const useAuth = () => {
       setAuthState((prev) => ({ ...prev, loading: true, error: null }));
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
+      router.push('/dashboard');
     } catch (error) {
       setAuthState((prev) => ({
         ...prev,
-        loading: false,
         error: error instanceof Error ? error : new Error('Failed to sign in'),
+        loading: false,
       }));
     }
   };
@@ -78,19 +92,18 @@ export const useAuth = () => {
     try {
       setAuthState((prev) => ({ ...prev, loading: true, error: null }));
       await firebaseSignOut(auth);
+      router.push('/');
     } catch (error) {
       setAuthState((prev) => ({
         ...prev,
-        loading: false,
         error: error instanceof Error ? error : new Error('Failed to sign out'),
+        loading: false,
       }));
     }
   };
 
   return {
-    user: authState.user,
-    loading: authState.loading,
-    error: authState.error,
+    ...authState,
     signInWithGoogle,
     signOut,
   };
