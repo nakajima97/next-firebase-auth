@@ -1,12 +1,20 @@
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { LoginButton } from '../../presentational/LoginButton';
-import { UserProfile } from '../../presentational/UserProfile';
 
 export const LoginContainer = () => {
-  const { user, signInWithGoogle, signOut, loading } = useAuth();
+  const { user, signInWithGoogle, loading } = useAuth();
+  const router = useRouter();
 
-  if (user) {
-    return <UserProfile user={user} onSignOut={signOut} disabled={loading} />;
+  useEffect(() => {
+    if (!loading && user) {
+      router.push('/dashboard');
+    }
+  }, [user, loading, router]);
+
+  if (loading || user) {
+    return null;
   }
 
   return <LoginButton onClick={signInWithGoogle} disabled={loading} />;
